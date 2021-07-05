@@ -20,23 +20,7 @@ class m210705_143530_create_book_table extends Migration
             'name' => $this->text(),
             'author_id' => $this->integer(),
         ]);
-
-        // creates index for column `author_id`
-        $this->createIndex(
-            '{{%idx-book-author_id}}',
-            '{{%book}}',
-            'author_id'
-        );
-
-        // add foreign key for table `{{%author}}`
-        $this->addForeignKey(
-            '{{%fk-book-author_id}}',
-            '{{%book}}',
-            'author_id',
-            '{{%author}}',
-            'id',
-            'CASCADE'
-        );
+        
     }
 
     /**
@@ -44,18 +28,6 @@ class m210705_143530_create_book_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%author}}`
-        $this->dropForeignKey(
-            '{{%fk-book-author_id}}',
-            '{{%book}}'
-        );
-
-        // drops index for column `author_id`
-        $this->dropIndex(
-            '{{%idx-book-author_id}}',
-            '{{%book}}'
-        );
-
         $this->dropTable('{{%book}}');
     }
 }
