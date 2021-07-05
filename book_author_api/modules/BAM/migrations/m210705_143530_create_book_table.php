@@ -20,6 +20,23 @@ class m210705_143530_create_book_table extends Migration
             'name' => $this->text(),
             'author_id' => $this->integer(),
         ]);
+
+        $connection = Yii::$app->db;
+        $dbSchema   = $connection->schema;
+        $allTables  = $dbSchema->getTableNames();
+
+        if (Yii::$app->getModule('ADM') && isset($allTables['author']) && !isset($dbSchema->getTable('book')->columns['author'])) {
+            $this->dropForeignKey(
+                '{{%fk-book-author_id}}',
+                '{{%book}}'
+            );
+
+            // drops index for column `author_id`
+            $this->dropIndex(
+                '{{%idx-book-author_id}}',
+                '{{%book}}'
+            );
+        }
         
     }
 
@@ -28,6 +45,23 @@ class m210705_143530_create_book_table extends Migration
      */
     public function safeDown()
     {
+        $connection = Yii::$app->db;
+        $dbSchema   = $connection->schema;
+        $allTables  = $dbSchema->getTableNames();
+
+        if (Yii::$app->getModule('ADM') && isset($allTables['author']) && isset($dbSchema->getTable('book')->columns['author'])) {
+            $this->dropForeignKey(
+                '{{%fk-book-author_id}}',
+                '{{%book}}'
+            );
+
+            // drops index for column `author_id`
+            $this->dropIndex(
+                '{{%idx-book-author_id}}',
+                '{{%book}}'
+            );
+        }
+
         $this->dropTable('{{%book}}');
     }
 }

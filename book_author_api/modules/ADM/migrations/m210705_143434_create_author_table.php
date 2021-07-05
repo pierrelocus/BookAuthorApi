@@ -17,7 +17,11 @@ class m210705_143434_create_author_table extends Migration
             'name' => $this->text(),
         ]);
 
-        try{
+        $connection = Yii::$app->db;
+        $dbSchema   = $connection->schema;
+        $allTables  = $dbSchema->getTableNames();
+
+        if (Yii::$app->getModule('BAM') && isset($allTables['book']) && !isset($dbSchema->getTable('book')->columns['author'])) {
             // creates index for column `author_id` in book table
             $this->createIndex(
                 '{{%idx-book-author_id}}',
@@ -34,8 +38,6 @@ class m210705_143434_create_author_table extends Migration
                 'id',
                 'CASCADE'
             );
-        } catch (Exception $e) {
-            error_log($e->getMessage());
         }
     }
 
@@ -44,8 +46,11 @@ class m210705_143434_create_author_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%author}}`
-        try {
+        $connection = Yii::$app->db;
+        $dbSchema   = $connection->schema;
+        $allTables  = $dbSchema->getTableNames();
+
+        if (Yii::$app->getModule('BAM') && isset($allTables['book']) && isset($dbSchema->getTable('book')->columns['author'])) {
             $this->dropForeignKey(
                 '{{%fk-book-author_id}}',
                 '{{%book}}'
@@ -56,8 +61,6 @@ class m210705_143434_create_author_table extends Migration
                 '{{%idx-book-author_id}}',
                 '{{%book}}'
             );
-        } catch (Exception $e) {
-            error_log($e->getMessage());
         }
 
         $this->dropTable('{{%author}}');

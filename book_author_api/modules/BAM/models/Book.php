@@ -3,7 +3,6 @@
 namespace app\modules\BAM\models;
 
 use Yii;
-use app\modules\ADM\models\Author;
 
 /**
  * This is the model class for table "book".
